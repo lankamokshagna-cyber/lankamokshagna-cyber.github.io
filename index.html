@@ -174,7 +174,6 @@
 
 <body class="antialiased">
 
-    <!-- Header & Navigation -->
     <header class="bg-slate-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-slate-800">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
@@ -194,7 +193,6 @@
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800">
             <a href="#about" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">About</a>
             <a href="#skills" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Skills</a>
@@ -204,7 +202,6 @@
     </header>
 
     <main class="pt-20">
-        <!-- Hero Section -->
         <section id="hero" class="min-h-[90vh] flex items-center hero-gradient">
             <div class="container mx-auto px-6 text-center">
                 <div class="max-w-4xl mx-auto">
@@ -222,13 +219,12 @@
             </div>
         </section>
 
-        <!-- About Me Section -->
         <section id="about" class="py-24 bg-slate-900 section-reveal">
             <div class="container mx-auto px-6">
                 <div class="max-w-4xl mx-auto text-center">
                     <h2 class="text-4xl font-bold text-white mb-6">About Me</h2>
                     <div class="relative w-40 h-40 mx-auto mb-8">
-                         <img class="rounded-full w-full h-full object-cover border-4 border-blue-500 shadow-lg" src="https://placehold.co/400x400/1e293b/94a3b8?text=LM" alt="Lanka Mokshagna Profile Picture">
+                         <img class="rounded-full w-full h-full object-cover border-4 border-blue-500 shadow-lg" src="profile-photo.jpg" alt="Lanka Mokshagna Profile Picture">
                     </div>
                     <p class="text-slate-300 text-lg leading-relaxed">
                         Hello! I'm Lanka Mokshagna, a dedicated and enthusiastic Electronics and Communication Engineering student at Amrita Vishwa Vidyapeetam. My journey in ECE has equipped me with a strong foundation in analog and digital electronics, circuit design, and signal processing. I'm particularly fascinated by the challenges of creating complex integrated circuits and systems. I thrive on problem-solving and enjoy working on projects that bridge the gap between hardware and software.
@@ -237,23 +233,19 @@
             </div>
         </section>
 
-        <!-- Skills Section -->
         <section id="skills" class="py-24 section-reveal">
             <div class="container mx-auto px-6">
                 <h2 class="text-4xl font-bold text-white text-center mb-12">Technical Skills</h2>
                 <div id="skills-container" class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-                    <!-- Skills will be dynamically inserted here -->
-                </div>
+                    </div>
             </div>
         </section>
 
-        <!-- Projects Section -->
         <section id="projects" class="py-24 bg-slate-900 section-reveal">
             <div class="container mx-auto px-6">
                 <h2 class="text-4xl font-bold text-white text-center mb-12">My Projects</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <!-- Project 1: Morse Code Generator -->
                     <div class="project-card rounded-lg overflow-hidden flex flex-col">
                         <img src="https://placehold.co/600x400/0f172a/4f46e5?text=Morse+Code" alt="Morse Code Generator Project" class="w-full h-48 object-cover">
                         <div class="p-6 flex flex-col flex-grow">
@@ -274,7 +266,6 @@
                         </div>
                     </div>
 
-                    <!-- Project 2: Audio Amplifier -->
                     <div class="project-card rounded-lg overflow-hidden flex flex-col">
                         <img src="https://placehold.co/600x400/0f172a/059669?text=Amplifier" alt="Audio Amplifier Project" class="w-full h-48 object-cover">
                         <div class="p-6 flex flex-col flex-grow">
@@ -295,7 +286,6 @@
                         </div>
                     </div>
 
-                    <!-- Project 3: Intercom -->
                     <div class="project-card rounded-lg overflow-hidden flex flex-col">
                         <img src="https://placehold.co/600x400/0f172a/be123c?text=Intercom" alt="Intercom Project" class="w-full h-48 object-cover">
                         <div class="p-6 flex flex-col flex-grow">
@@ -319,7 +309,6 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
         <section id="contact" class="py-24 section-reveal">
             <div class="container mx-auto px-6 text-center">
                  <h2 class="text-4xl font-bold text-white mb-6">Let's Connect</h2>
@@ -346,7 +335,6 @@
         </section>
     </main>
     
-    <!-- Footer -->
     <footer class="bg-slate-900 border-t border-slate-800">
         <div class="container mx-auto px-6 py-6">
             <p class="text-center text-slate-500 text-sm">
@@ -355,14 +343,12 @@
         </div>
     </footer>
     
-    <!-- Scroll to Top Button -->
     <div id="scroll-to-top" title="Go to top">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
         </svg>
     </div>
 
-    <!-- AI Explanation Modal -->
     <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] hidden">
         <div id="ai-modal-content" class="bg-slate-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-700">
             <div class="flex items-center justify-between p-4 border-b border-slate-700">
@@ -372,11 +358,9 @@
                 <button id="close-modal-btn" class="text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
             <div id="ai-response-container" class="p-6 overflow-y-auto">
-                <!-- Loading Spinner -->
                 <div id="ai-loader" class="flex justify-center items-center h-48">
                     <div class="loader"></div>
                 </div>
-                <!-- AI Response -->
                 <div id="ai-response" class="prose"></div>
             </div>
         </div>
@@ -573,4 +557,4 @@
     </script>
 </body>
 </html>
-
+```eof
