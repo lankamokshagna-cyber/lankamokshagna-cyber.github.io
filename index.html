@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanka Mokshagna | ECE Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #e2e8f0; /* Slate 200 */
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #3b82f6, #0f172a);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+        }
+
+        .section-reveal {
+            opacity: 0;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transform: translateY(20px);
+        }
+
+        .section-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .skill-tag {
+            transition: all 0.3s ease;
+        }
+        .skill-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+            background-color: #3b82f6;
+            color: #fff;
+        }
+        .project-card {
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155; /* Slate 700 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at var(--x) var(--y), rgba(59, 130, 246, 0.3), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        #copy-message {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        #scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3b82f6;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+            z-index: 100;
+        }
+        #scroll-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* AI Modal Styles */
+        #ai-modal-content {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #3b82f6;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: spin 1s linear infinite;
+        }
+        /* Prose styles for AI response */
+        .prose {
+            color: #cbd5e1; /* slate-300 */
+        }
+        .prose h3 {
+            color: #fff;
+            font-weight: 600;
+        }
+        .prose p {
+            margin-bottom: 1em;
+        }
+        .prose strong {
+            color: #93c5fd; /* blue-300 */
+        }
+        .prose ul {
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+        .prose li::marker {
+            color: #3b82f6;
+        }
+
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-slate-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-slate-800">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold text-white">
+                    <a href="#">Lanka Mokshagna</a>
+                </div>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="nav-link text-slate-300 hover:text-blue-400">About</a>
+                    <a href="#skills" class="nav-link text-slate-300 hover:text-blue-400">Skills</a>
+                    <a href="#projects" class="nav-link text-slate-300 hover:text-blue-400">Projects</a>
+                    <a href="#contact" class="nav-link text-slate-300 hover:text-blue-400">Contact</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="menu-btn" class="text-white focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800">
+            <a href="#about" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">About</a>
+            <a href="#skills" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Skills</a>
+            <a href="#projects" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Projects</a>
+            <a href="#contact" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Contact</a>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-[90vh] flex items-center hero-gradient">
+            <div class="container mx-auto px-6 text-center">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight mb-4" style="animation: fadeIn 1s ease-out forwards;">
+                        Electronics & Communication Engineer
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8" style="animation: fadeIn 1s 0.3s ease-out forwards; opacity: 0;">
+                        Designing the future of hardware, from intricate analog circuits to complex digital systems.
+                    </p>
+                    <div class="flex justify-center space-x-4" style="animation: fadeIn 1s 0.6s ease-out forwards; opacity: 0;">
+                        <a href="#projects" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">View My Work</a>
+                        <a href="resume for ece.pdf" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">View Resume</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="py-24 bg-slate-900 section-reveal">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-4xl font-bold text-white mb-6">About Me</h2>
+                    <div class="relative w-40 h-40 mx-auto mb-8">
+                         <img class="rounded-full w-full h-full object-cover border-4 border-blue-500 shadow-lg" src="https://placehold.co/400x400/1e293b/94a3b8?text=LM" alt="Lanka Mokshagna Profile Picture">
+                    </div>
+                    <p class="text-slate-300 text-lg leading-relaxed">
+                        Hello! I'm Lanka Mokshagna, a dedicated and enthusiastic Electronics and Communication Engineering student at Amrita Vishwa Vidyapeetam. My journey in ECE has equipped me with a strong foundation in analog and digital electronics, circuit design, and signal processing. I'm particularly fascinated by the challenges of creating complex integrated circuits and systems. I thrive on problem-solving and enjoy working on projects that bridge the gap between hardware and software.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-24 section-reveal">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-white text-center mb-12">Technical Skills</h2>
+                <div id="skills-container" class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+                    <!-- Skills will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-24 bg-slate-900 section-reveal">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-white text-center mb-12">My Projects</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Project 1: Morse Code Generator -->
+                    <div class="project-card rounded-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/0f172a/4f46e5?text=Morse+Code" alt="Morse Code Generator Project" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-white mb-2">Morse Code Generator</h3>
+                            <p class="text-slate-400 mb-4 flex-grow project-description">
+                                A software-based Morse code generator for both alphanumeric characters, implemented in the Keil uVision IDE to demonstrate fundamental C programming and algorithm design skills.
+                            </p>
+                            <div class="mt-auto">
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">C</span>
+                                    <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">Keil uVision</span>
+                                </div>
+                                <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-4">View on GitHub &rarr;</a>
+                                <button class="ask-ai-btn w-full text-center bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                                    <span class="mr-2">✨</span> Ask AI to Explain
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Audio Amplifier -->
+                    <div class="project-card rounded-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/0f172a/059669?text=Amplifier" alt="Audio Amplifier Project" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-white mb-2">Multi-Stage Audio Amplifier</h3>
+                            <p class="text-slate-400 mb-4 flex-grow project-description">
+                                Developed and built a multi-stage audio amplifier circuit to amplify low-power audio signals, demonstrating a strong understanding of analog circuit design, simulation, and hardware implementation.
+                            </p>
+                             <div class="mt-auto">
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full">Analog Circuits</span>
+                                    <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full">LTspice</span>
+                                </div>
+                                <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-4">View on GitHub &rarr;</a>
+                                <button class="ask-ai-btn w-full text-center bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                                    <span class="mr-2">✨</span> Ask AI to Explain
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Intercom -->
+                    <div class="project-card rounded-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/0f172a/be123c?text=Intercom" alt="Intercom Project" class="w-full h-48 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-white mb-2">Two-Way Intercom Circuit</h3>
+                            <p class="text-slate-400 mb-4 flex-grow project-description">
+                               Designed and implemented a two-way intercom system for short-range voice communication, showcasing skills in audio circuit design and the integration of microphone and speaker components.
+                            </p>
+                             <div class="mt-auto">
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="bg-red-900/50 text-red-300 text-xs font-semibold px-2.5 py-1 rounded-full">Audio Circuits</span>
+                                    <span class="bg-red-900/50 text-red-300 text-xs font-semibold px-2.5 py-1 rounded-full">Hardware</span>
+                                </div>
+                                <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-4">View on GitHub &rarr;</a>
+                                <button class="ask-ai-btn w-full text-center bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                                    <span class="mr-2">✨</span> Ask AI to Explain
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 section-reveal">
+            <div class="container mx-auto px-6 text-center">
+                 <h2 class="text-4xl font-bold text-white mb-6">Let's Connect</h2>
+                 <p class="text-slate-300 max-w-2xl mx-auto mb-10 text-lg">
+                     I'm currently seeking new opportunities and am always open to interesting conversations.
+                 </p>
+                 <div class="relative inline-block mb-10">
+                    <button id="copy-email-btn" class="bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300 text-lg">
+                        lankamokshagna@gmail.com
+                    </button>
+                    <div id="copy-message" class="absolute -top-12 left-1/2 -translate-x-1/2 bg-green-500 text-white text-sm py-1.5 px-3 rounded-md opacity-0 pointer-events-none">
+                        Copied to clipboard!
+                    </div>
+                 </div>
+                 <div class="flex justify-center space-x-8">
+                    <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-slate-400 hover:text-blue-400 transition transform hover:scale-110">
+                        <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.838 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd" /></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/in/mokshagna-lanka-36826a299/" target="_blank" class="text-slate-400 hover:text-blue-400 transition transform hover:scale-110">
+                        <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                 </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800">
+        <div class="container mx-auto px-6 py-6">
+            <p class="text-center text-slate-500 text-sm">
+                &copy; 2025 Lanka Mokshagna. Designed with passion.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Scroll to Top Button -->
+    <div id="scroll-to-top" title="Go to top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </div>
+
+    <!-- AI Explanation Modal -->
+    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] hidden">
+        <div id="ai-modal-content" class="bg-slate-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-700">
+            <div class="flex items-center justify-between p-4 border-b border-slate-700">
+                <h3 class="text-xl font-bold text-white flex items-center">
+                    <span class="mr-3 text-2xl">✨</span> AI Project Insights
+                </h3>
+                <button id="close-modal-btn" class="text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <div id="ai-response-container" class="p-6 overflow-y-auto">
+                <!-- Loading Spinner -->
+                <div id="ai-loader" class="flex justify-center items-center h-48">
+                    <div class="loader"></div>
+                </div>
+                <!-- AI Response -->
+                <div id="ai-response" class="prose"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Mobile Menu Toggle ---
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(anchor => {
+                anchor.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            // --- Dynamic Skills Population ---
+            const skills = [
+                'C', 'Keil', 'LTspice', 'MATLAB', 'Ansys', 'Proteus', 
+                'Circuit Design', 'Analog Electronics', 'Digital Electronics', 
+                'Signal Processing', 'Git & GitHub', 'Problem Solving'
+            ];
+            const skillsContainer = document.getElementById('skills-container');
+            skills.forEach(skill => {
+                const skillTag = document.createElement('div');
+                skillTag.className = 'skill-tag bg-slate-800 border border-slate-700 text-blue-300 text-sm font-medium px-4 py-2 rounded-full shadow-md cursor-pointer';
+                skillTag.textContent = skill;
+                skillsContainer.appendChild(skillTag);
+            });
+            
+            // --- Email Copy to Clipboard ---
+            const copyBtn = document.getElementById('copy-email-btn');
+            const copyMsg = document.getElementById('copy-message');
+            copyBtn.addEventListener('click', () => {
+                const emailToCopy = copyBtn.textContent.trim();
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = emailToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyMsg.style.transform = 'translate(-50%, -10px)';
+                    copyMsg.style.opacity = '1';
+                    setTimeout(() => {
+                        copyMsg.style.transform = 'translate(-50%, 0px)';
+                        copyMsg.style.opacity = '0';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Unable to copy', err);
+                }
+                document.body.removeChild(tempTextArea);
+            });
+
+            // --- Scroll Reveal Animation ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section-reveal').forEach(section => {
+                observer.observe(section);
+            });
+            
+            // --- Project Card Mouse Follow Glow ---
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--x', `${x}px`);
+                    card.style.setProperty('--y', `${y}px`);
+                });
+            });
+
+            // --- Scroll to Top Button ---
+            const scrollToTopBtn = document.getElementById('scroll-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.classList.add('visible');
+                } else {
+                    scrollToTopBtn.classList.remove('visible');
+                }
+            });
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // --- Gemini AI Feature ---
+            const aiModal = document.getElementById('ai-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const aiLoader = document.getElementById('ai-loader');
+            const aiResponseEl = document.getElementById('ai-response');
+            const askAiButtons = document.querySelectorAll('.ask-ai-btn');
+
+            const openModal = () => aiModal.classList.remove('hidden');
+            const closeModal = () => aiModal.classList.add('hidden');
+
+            closeModalBtn.addEventListener('click', closeModal);
+            aiModal.addEventListener('click', (e) => {
+                if (e.target === aiModal) {
+                    closeModal();
+                }
+            });
+
+            askAiButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const card = e.target.closest('.project-card');
+                    const projectTitle = card.querySelector('h3').textContent;
+                    const projectDescription = card.querySelector('.project-description').textContent.trim();
+                    
+                    openModal();
+                    aiLoader.style.display = 'flex';
+                    aiResponseEl.innerHTML = '';
+                    
+                    getAIAssistedExplanation(projectTitle, projectDescription);
+                });
+            });
+
+            async function getAIAssistedExplanation(title, description) {
+                const apiKey = ""; // API key is handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const systemPrompt = "You are a helpful engineering manager explaining a student's project to a non-technical recruiter. Your goal is to make the project sound impressive but easy to understand. Frame the explanation in 3 parts: 1) A simple 'What it is' summary. 2) A 'Key Skills Demonstrated' section as a bulleted list, highlighting the practical abilities shown. 3) A 'Why it Matters' section explaining its real-world relevance. Use markdown for formatting.";
+                const userQuery = `Project Title: ${title}\nProject Description: ${description}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                let response;
+                let attempts = 0;
+                const maxAttempts = 5;
+                let delay = 1000;
+
+                while (attempts < maxAttempts) {
+                    try {
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            const candidate = result.candidates?.[0];
+                            if (candidate && candidate.content?.parts?.[0]?.text) {
+                                // Basic markdown to HTML conversion
+                                let htmlResponse = candidate.content.parts[0].text;
+                                htmlResponse = htmlResponse
+                                    .replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>') // Bold to h3 for section titles
+                                    .replace(/\* (.*?)(?=\n\*|\n\n|$)/g, '<li>$1</li>') // List items
+                                    .replace(/(\r\n|\n|\r)/g, '<br>');
+                                 htmlResponse = `<ul>${htmlResponse.replace(/<br><li>/g, '<li>')}</ul>`.replace(/<\/li><br>/g, '</li>');
+
+                                aiResponseEl.innerHTML = htmlResponse;
+                            } else {
+                                aiResponseEl.textContent = 'Sorry, the AI response was empty. Please try again.';
+                            }
+                            aiLoader.style.display = 'none';
+                            return; 
+                        } else if (response.status === 429 || response.status >= 500) {
+                            // Throttling or server error, wait and retry
+                            attempts++;
+                            if (attempts >= maxAttempts) {
+                                throw new Error(`API request failed after ${maxAttempts} attempts with status: ${response.status}`);
+                            }
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 2; // Exponential backoff
+                        } else {
+                            // Other client-side error
+                             throw new Error(`API request failed with status: ${response.status}`);
+                        }
+
+                    } catch (error) {
+                        console.error('Gemini API call failed:', error);
+                        attempts++;
+                         if (attempts >= maxAttempts) {
+                            aiResponseEl.textContent = 'Sorry, something went wrong while contacting the AI assistant. Please try again later.';
+                            aiLoader.style.display = 'none';
+                            return;
+                        }
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
