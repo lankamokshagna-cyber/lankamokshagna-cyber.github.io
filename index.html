@@ -1,580 +1,830 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lanka Mokshagna | ECE Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanka Mokshagna — ECE & Neuromorphic AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #06090f;
+  --bg2:       #0c1220;
+  --bg3:       #111a2e;
+  --cyan:      #00d4ff;
+  --amber:     #ffa827;
+  --red:       #ff3c5c;
+  --text:      #cdd6f0;
+  --text-dim:  #6a7a99;
+  --border:    rgba(0,212,255,.15);
+  --font-head: 'Rajdhani', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-body: 'Barlow', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+/* ─── CURSOR ─── */
+#cursor, #cursor-trail {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: difference;
+}
+#cursor { width:12px; height:12px; background:var(--cyan); transform:translate(-50%,-50%); transition: transform .1s; }
+#cursor-trail { width:32px; height:32px; border:1px solid var(--cyan); transform:translate(-50%,-50%); opacity:.5; transition: left .12s ease, top .12s ease; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
-            color: #e2e8f0; /* Slate 200 */
-        }
-        
-        .hero-gradient {
-            background: linear-gradient(-45deg, #0f172a, #1e293b, #3b82f6, #0f172a);
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
-        }
+/* ─── SCANLINE OVERLAY ─── */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9000;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.07) 2px, rgba(0,0,0,.07) 4px);
+}
 
-        .section-reveal {
-            opacity: 0;
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            transform: translateY(20px);
-        }
+/* ─── NAV ─── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 1.2rem 4rem;
+  background: rgba(6,9,15,.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--font-mono); font-size:.85rem; color:var(--cyan); letter-spacing:.15em;
+}
+.nav-logo span { color:var(--amber); }
+.nav-links { display:flex; gap:2.5rem; list-style:none; }
+.nav-links a {
+  font-family: var(--font-head); font-size:1rem; font-weight:600; letter-spacing:.12em;
+  color: var(--text-dim); text-decoration:none; text-transform:uppercase;
+  transition: color .2s;
+  position: relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-4px; left:0; width:0; height:1px;
+  background: var(--cyan); transition: width .3s;
+}
+.nav-links a:hover { color:var(--cyan); }
+.nav-links a:hover::after { width:100%; }
 
-        .section-reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+#circuit-canvas {
+  position: absolute; inset:0; z-index:0; opacity:.35;
+}
+.hero-content {
+  position:relative; z-index:1;
+  max-width: 760px;
+}
+.hero-tag {
+  font-family: var(--font-mono); font-size:.75rem; color:var(--amber);
+  letter-spacing:.25em; text-transform:uppercase; margin-bottom:1.2rem;
+  display:flex; align-items:center; gap:.8rem;
+}
+.hero-tag::before { content:''; width:32px; height:1px; background:var(--amber); }
+.hero-name {
+  font-family: var(--font-head); font-size: clamp(3.5rem,7vw,7rem); font-weight:700;
+  line-height:.95; letter-spacing:-.01em;
+  color: #fff;
+  text-transform: uppercase;
+}
+.hero-name .line2 { color:var(--cyan); display:block; }
+.hero-sub {
+  font-family: var(--font-mono); font-size:.9rem; color:var(--text-dim);
+  margin-top:1.8rem; line-height:1.7;
+  border-left: 2px solid var(--cyan); padding-left:1.2rem;
+  max-width:500px;
+}
+.hero-ctas {
+  margin-top:2.5rem; display:flex; gap:1.2rem; flex-wrap:wrap;
+}
+.btn {
+  font-family: var(--font-head); font-size:1rem; font-weight:700;
+  letter-spacing:.15em; text-transform:uppercase; text-decoration:none;
+  padding:.75rem 1.8rem; border-radius:2px;
+  transition: all .25s; cursor:none;
+}
+.btn-primary {
+  background:var(--cyan); color:#06090f;
+  box-shadow: 0 0 20px rgba(0,212,255,.3);
+}
+.btn-primary:hover { background:#fff; box-shadow: 0 0 40px rgba(0,212,255,.6); }
+.btn-outline {
+  border: 1px solid var(--amber); color:var(--amber);
+}
+.btn-outline:hover { background:var(--amber); color:#06090f; box-shadow: 0 0 30px rgba(255,168,39,.4); }
 
-        .skill-tag {
-            transition: all 0.3s ease;
-        }
-        .skill-tag:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
-            background-color: #3b82f6;
-            color: #fff;
-        }
-        .project-card {
-            background-color: #1e293b; /* Slate 800 */
-            border: 1px solid #334155; /* Slate 700 */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at var(--x) var(--y), rgba(59, 130, 246, 0.3), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-        }
-        .project-card:hover::before {
-            opacity: 1;
-        }
-        .project-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-        }
-        .nav-link {
-            position: relative;
-            transition: color 0.3s ease;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        #copy-message {
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-        #scroll-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #3b82f6;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
-            transform: translateY(10px);
-            z-index: 100;
-        }
-        #scroll-to-top.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+.hero-stats {
+  position:absolute; right:4rem; bottom:6rem; z-index:1;
+  display:flex; flex-direction:column; gap:1.5rem;
+}
+.stat { text-align:right; }
+.stat-num { font-family:var(--font-head); font-size:2.5rem; font-weight:700; color:var(--cyan); line-height:1; }
+.stat-label { font-family:var(--font-mono); font-size:.65rem; color:var(--text-dim); letter-spacing:.2em; text-transform:uppercase; }
 
-        /* AI Modal Styles */
-        #ai-modal-content {
-            animation: fadeIn 0.3s ease-out;
-        }
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: #3b82f6;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: spin 1s linear infinite;
-        }
-        /* Prose styles for AI response */
-        .prose {
-            color: #cbd5e1; /* slate-300 */
-        }
-        .prose h3 {
-            color: #fff;
-            font-weight: 600;
-        }
-        .prose p {
-            margin-bottom: 1em;
-        }
-        .prose strong {
-            color: #93c5fd; /* blue-300 */
-        }
-        .prose ul {
-            list-style-position: inside;
-            padding-left: 1rem;
-        }
-        .prose li::marker {
-            color: #3b82f6;
-        }
+.scroll-hint {
+  position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); z-index:1;
+  font-family:var(--font-mono); font-size:.65rem; color:var(--text-dim); letter-spacing:.2em;
+  display:flex; flex-direction:column; align-items:center; gap:.5rem;
+}
+.scroll-hint::after {
+  content:''; width:1px; height:40px; background:linear-gradient(var(--cyan),transparent);
+  animation: scrollpulse 1.6s ease-in-out infinite;
+}
+@keyframes scrollpulse { 0%,100%{opacity:0;transform:scaleY(0);transform-origin:top} 50%{opacity:1;transform:scaleY(1)} }
 
-    </style>
+/* ─── SECTIONS ─── */
+section { padding: 7rem 4rem; }
+.section-header { margin-bottom:4rem; }
+.section-num {
+  font-family:var(--font-mono); font-size:.7rem; color:var(--cyan);
+  letter-spacing:.3em; text-transform:uppercase; display:block; margin-bottom:.5rem;
+}
+.section-title {
+  font-family:var(--font-head); font-size:clamp(2rem,4vw,3.5rem); font-weight:700;
+  text-transform:uppercase; letter-spacing:.04em; color:#fff; line-height:1;
+}
+.section-title em { color:var(--cyan); font-style:normal; }
+.section-line {
+  width:60px; height:2px; background:linear-gradient(90deg,var(--cyan),transparent);
+  margin-top:1rem;
+}
+
+/* ─── ABOUT ─── */
+#about { background: var(--bg2); }
+.about-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start;
+}
+.about-text p {
+  font-size:1.05rem; line-height:1.85; color:var(--text); margin-bottom:1.2rem;
+}
+.about-text p strong { color:var(--amber); font-weight:600; }
+.edu-timeline { margin-top:2.5rem; }
+.edu-item {
+  display:flex; gap:1.5rem; padding:1.2rem 0;
+  border-bottom:1px solid var(--border);
+}
+.edu-item:last-child { border-bottom:none; }
+.edu-year { font-family:var(--font-mono); font-size:.75rem; color:var(--cyan); white-space:nowrap; min-width:90px; padding-top:.2rem; }
+.edu-info { }
+.edu-deg { font-family:var(--font-head); font-size:1.05rem; font-weight:600; color:#fff; }
+.edu-place { font-family:var(--font-mono); font-size:.75rem; color:var(--text-dim); margin-top:.2rem; }
+.edu-score { margin-top:.3rem; display:inline-block; font-family:var(--font-mono); font-size:.7rem; color:var(--amber); background:rgba(255,168,39,.1); border:1px solid rgba(255,168,39,.3); padding:.15rem .5rem; }
+
+/* ─── SKILLS ─── */
+#skills { }
+.skills-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:1.5rem;
+}
+.skill-card {
+  background: var(--bg2); border:1px solid var(--border); padding:1.8rem;
+  position:relative; overflow:hidden;
+  transition: border-color .3s, transform .3s;
+}
+.skill-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--cyan), transparent);
+  transform: scaleX(0); transform-origin:left; transition:transform .3s;
+}
+.skill-card:hover { border-color:var(--cyan); transform:translateY(-4px); }
+.skill-card:hover::before { transform:scaleX(1); }
+.skill-cat {
+  font-family:var(--font-mono); font-size:.65rem; color:var(--cyan); letter-spacing:.25em;
+  text-transform:uppercase; margin-bottom:1rem;
+}
+.skill-items { display:flex; flex-wrap:wrap; gap:.5rem; }
+.tag {
+  font-family:var(--font-mono); font-size:.72rem; padding:.3rem .7rem;
+  border:1px solid var(--border); color:var(--text-dim);
+  transition:all .2s;
+}
+.tag:hover { border-color:var(--cyan); color:var(--cyan); background:rgba(0,212,255,.07); }
+.tag.amber { border-color:rgba(255,168,39,.3); color:var(--amber); }
+.tag.red { border-color:rgba(255,60,92,.3); color:var(--red); }
+
+/* ─── PROJECTS ─── */
+#projects { background: var(--bg2); }
+.projects-list { display:flex; flex-direction:column; gap:2.5rem; }
+.project-card {
+  border:1px solid var(--border); background:var(--bg);
+  display:grid; grid-template-columns:auto 1fr; gap:0;
+  position:relative; overflow:hidden;
+  transition: border-color .3s;
+}
+.project-card:hover { border-color:var(--cyan); }
+.project-card:hover .project-num { color:var(--cyan); }
+.project-accent {
+  width:4px;
+  background:linear-gradient(180deg, var(--cyan), transparent);
+}
+.project-accent.amber { background:linear-gradient(180deg, var(--amber), transparent); }
+.project-accent.red   { background:linear-gradient(180deg, var(--red),  transparent); }
+.project-body { padding:2.2rem; }
+.project-meta {
+  display:flex; align-items:center; gap:1.2rem; margin-bottom:1rem;
+}
+.project-num { font-family:var(--font-mono); font-size:.75rem; color:var(--text-dim); letter-spacing:.2em; transition:color .3s; }
+.project-date { font-family:var(--font-mono); font-size:.7rem; color:var(--text-dim); margin-left:auto; }
+.project-title {
+  font-family:var(--font-head); font-size:1.6rem; font-weight:700;
+  color:#fff; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.8rem;
+  line-height:1.1;
+}
+.project-desc { font-size:.95rem; line-height:1.8; color:var(--text); margin-bottom:1.5rem; }
+.project-desc strong { color:var(--amber); font-weight:600; }
+.project-bullets { margin:0 0 1.5rem 1rem; }
+.project-bullets li {
+  font-size:.9rem; line-height:1.7; color:var(--text-dim); margin-bottom:.4rem;
+  padding-left:.5rem;
+}
+.project-bullets li::marker { color:var(--cyan); }
+.project-tags { display:flex; flex-wrap:wrap; gap:.5rem; }
+.project-link {
+  margin-top:1.5rem; margin-left:auto; display:flex; align-items:center; gap:.5rem;
+  font-family:var(--font-mono); font-size:.72rem; color:var(--cyan); text-decoration:none;
+  letter-spacing:.1em; transition:gap .2s;
+}
+.project-link:hover { gap:.9rem; }
+
+/* ─── SIGNAL DECORATION ─── */
+.signal-wave {
+  display:block; width:100%; overflow:hidden; line-height:0;
+}
+
+/* ─── CONTACT ─── */
+#contact {
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(ellipse 60% 60% at 80% 50%, rgba(0,212,255,.05) 0%, transparent 70%),
+    var(--bg);
+}
+.contact-inner { max-width:700px; }
+.contact-inner p { font-size:1.05rem; line-height:1.8; color:var(--text-dim); margin-bottom:2.5rem; }
+.contact-links { display:flex; flex-direction:column; gap:1rem; }
+.contact-link {
+  display:flex; align-items:center; gap:1.5rem;
+  padding:1.2rem 1.5rem; border:1px solid var(--border);
+  text-decoration:none; color:var(--text);
+  transition:all .25s; background:var(--bg2);
+}
+.contact-link:hover { border-color:var(--cyan); color:var(--cyan); background:rgba(0,212,255,.05); transform:translateX(6px); }
+.contact-link-icon { font-family:var(--font-mono); font-size:.7rem; color:var(--cyan); min-width:60px; letter-spacing:.1em; }
+.contact-link-text { font-family:var(--font-mono); font-size:.85rem; }
+
+/* ─── FOOTER ─── */
+footer {
+  padding:2rem 4rem; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.footer-left { font-family:var(--font-mono); font-size:.7rem; color:var(--text-dim); letter-spacing:.1em; }
+.footer-right { font-family:var(--font-mono); font-size:.7rem; color:var(--text-dim); }
+
+/* ─── GLITCH ─── */
+.glitch { position:relative; }
+.glitch::before, .glitch::after {
+  content: attr(data-text); position:absolute; top:0; left:0; width:100%;
+}
+.glitch::before {
+  color:var(--red); clip-path:polygon(0 0,100% 0,100% 35%,0 35%);
+  transform:translate(-3px,0); animation:glitch1 4s infinite;
+}
+.glitch::after {
+  color:var(--cyan); clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);
+  transform:translate(3px,0); animation:glitch2 4s infinite;
+}
+@keyframes glitch1 {
+  0%,90%,100%{transform:translate(-3px,0);opacity:0}
+  91%,93%{transform:translate(-3px,-2px);opacity:1}
+  92%{transform:translate(3px,2px);opacity:1}
+}
+@keyframes glitch2 {
+  0%,90%,100%{transform:translate(3px,0);opacity:0}
+  91%,93%{transform:translate(3px,2px);opacity:1}
+  92%{transform:translate(-3px,-2px);opacity:1}
+}
+
+/* ─── REVEAL ─── */
+.reveal { opacity:0; transform:translateY(30px); transition:opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ─── PULSE RING ─── */
+.pulse-ring {
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:var(--cyan); position:relative; margin-right:.5rem;
+}
+.pulse-ring::after {
+  content:''; position:absolute; inset:-4px; border-radius:50%;
+  border:1px solid var(--cyan); animation:pulse 2s ease-out infinite;
+}
+@keyframes pulse { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(2.2);opacity:0} }
+
+/* ─── PROGRESS BARS ─── */
+.skill-bar-wrap { margin-top:.8rem; }
+.skill-bar-label { display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:.65rem; color:var(--text-dim); margin-bottom:.3rem; }
+.skill-bar { height:2px; background:var(--bg3); }
+.skill-bar-fill { height:100%; background:linear-gradient(90deg,var(--cyan),var(--amber)); width:0; transition:width 1.2s ease; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  nav { padding:1rem 1.5rem; }
+  section { padding:5rem 1.5rem; }
+  #hero { padding:0 1.5rem; }
+  .hero-stats { display:none; }
+  .about-grid { grid-template-columns:1fr; gap:3rem; }
+  footer { flex-direction:column; gap:.5rem; text-align:center; }
+}
+</style>
 </head>
+<body>
 
-<body class="antialiased">
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
 
-    <!-- Header & Navigation -->
-    <header class="bg-slate-900/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-slate-800">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="text-2xl font-bold text-white">
-                    <a href="#">Lanka Mokshagna</a>
-                </div>
-                <nav class="hidden md:flex items-center space-x-8">
-                    <a href="#about" class="nav-link text-slate-300 hover:text-blue-400">About</a>
-                    <a href="#skills" class="nav-link text-slate-300 hover:text-blue-400">Skills</a>
-                    <a href="#projects" class="nav-link text-slate-300 hover:text-blue-400">Projects</a>
-                    <a href="#contact" class="nav-link text-slate-300 hover:text-blue-400">Contact</a>
-                </nav>
-                <div class="md:hidden">
-                    <button id="menu-btn" class="text-white focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800">
-            <a href="#about" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">About</a>
-            <a href="#skills" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Skills</a>
-            <a href="#projects" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Projects</a>
-            <a href="#contact" class="block py-3 px-6 text-sm text-slate-300 hover:bg-slate-800">Contact</a>
-        </div>
-    </header>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">LM<span>_</span>SRI_SAI</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
 
-    <main class="pt-20">
-        <!-- Hero Section -->
-        <section id="hero" class="min-h-[90vh] flex items-center hero-gradient">
-            <div class="container mx-auto px-6 text-center">
-                <div class="max-w-4xl mx-auto">
-                    <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight mb-4" style="animation: fadeIn 1s ease-out forwards;">
-                        Electronics & Communication Engineer
-                    </h1>
-                    <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8" style="animation: fadeIn 1s 0.3s ease-out forwards; opacity: 0;">
-                        Designing the future of hardware, from intricate analog circuits to complex digital systems.
-                    </p>
-                    <div class="flex justify-center space-x-4" style="animation: fadeIn 1s 0.6s ease-out forwards; opacity: 0;">
-                        <a href="#projects" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">View My Work</a>
-                        <a href="resume for ece.pdf" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">View Resume</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+<!-- HERO -->
+<section id="hero">
+  <canvas id="circuit-canvas"></canvas>
 
-        <!-- About Me Section -->
-        <section id="about" class="py-24 bg-slate-900 section-reveal">
-            <div class="container mx-auto px-6">
-                <div class="max-w-4xl mx-auto text-center">
-                    <h2 class="text-4xl font-bold text-white mb-6">About Me</h2>
-                    <div class="relative w-40 h-40 mx-auto mb-8">
-                         <img class="rounded-full w-full h-full object-cover border-4 border-blue-500 shadow-lg" src="profile-photo.jpg" alt="Lanka Mokshagna Profile Picture">
-                    </div>
-                    <p class="text-slate-300 text-lg leading-relaxed">
-                        Hello! I'm Lanka Mokshagna, a dedicated and enthusiastic Electronics and Communication Engineering student at Amrita Vishwa Vidyapeetam. My journey in ECE has equipped me with a strong foundation in analog and digital electronics, circuit design, and signal processing. I'm particularly fascinated by the challenges of creating complex integrated circuits and systems. I thrive on problem-solving and enjoy working on projects that bridge the gap between hardware and software.
-                    </p>
-                </div>
-            </div>
-        </section>
+  <div class="hero-content">
+    <div class="hero-tag">
+      <span class="pulse-ring"></span>
+      ECE · Neuromorphic AI · Embedded Systems
+    </div>
+    <h1 class="hero-name">
+      <span class="glitch" data-text="LANKA">LANKA</span>
+      <span class="line2">MOKSHAGNA</span>
+    </h1>
+    <p class="hero-sub">
+      // Bridging the gap between silicon and intelligence.<br>
+      Building cyber-physical systems where hardware<br>
+      meets adaptive AI at the signal level.
+    </p>
+    <div class="hero-ctas">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="https://lankamokshagna-cyber.github.io/resume for ece.pdf" target="_blank" class="btn btn-outline">Resume PDF</a>
+    </div>
+  </div>
 
-        <!-- Skills Section -->
-        <section id="skills" class="py-24 section-reveal">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-white text-center mb-12">Technical Skills</h2>
-                <div id="skills-container" class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-                    <!-- Skills will be dynamically inserted here -->
-                </div>
-            </div>
-        </section>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Active Projects</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">96.4<span style="font-size:1.2rem">%</span></div>
+      <div class="stat-label">YOLOv2 Accuracy</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">SNN</div>
+      <div class="stat-label">Neuromorphic AI</div>
+    </div>
+  </div>
 
-        <!-- Projects Section -->
-        <section id="projects" class="py-24 bg-slate-900 section-reveal">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-white text-center mb-12">My Projects</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Project 1: Morse Code Generator -->
-                    <div class="project-card rounded-lg overflow-hidden flex flex-col">
-                        <img src="https://placehold.co/600x400/0f172a/4f46e5?text=LPC2148" alt="Morse Code Generator Project" class="w-full h-48 object-cover">
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="text-xl font-bold text-white mb-2">Morse Code Generator</h3>
-                            <p class="text-slate-400 mb-4 flex-grow project-description">
-                                <!-- UPDATED DESCRIPTION -->
-                                An embedded system that translates alphanumeric characters into audible and visible Morse code. Implemented on an LPC2148 ARM7 microcontroller, programmed in C using Keil uVision and simulated in Proteus.
-                            </p>
-                            <div class="mt-auto">
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">C</span>
-                                    <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">Keil uVision</span>
-                                    <span class="bg-blue-900/50 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">LPC2148</span>
-                                </div>
-                                <!-- ADDED LINK TO PDF REPORT -->
-                                <a href="morse-code-generator-report.pdf" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-2">View Full Report (PDF) &rarr;</a>
-                                <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-4">View on GitHub &rarr;</a>
-                                <button class="ask-ai-btn w-full text-center bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
-                                    <span class="mr-2">✨</span> Ask AI to Explain
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
 
-                    <!-- Project 2: Audio Amplifier -->
-                    <div class="project-card rounded-lg overflow-hidden flex flex-col">
-                        <img src="https://placehold.co/600x400/0f172a/059669?text=Amplifier" alt="Audio Amplifier Project" class="w-full h-48 object-cover">
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="text-xl font-bold text-white mb-2">Multi-Stage Audio Amplifier</h3>
-                            <p class="text-slate-400 mb-4 flex-grow project-description">
-                                Developed and built a multi-stage audio amplifier circuit to amplify low-power audio signals, demonstrating a strong understanding of analog circuit design, simulation, and hardware implementation.
-                            </p>
-                             <div class="mt-auto">
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full">Analog Circuits</span>
-                                    <span class="bg-green-900/50 text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full">LTspice</span>
-                                </div>
-                                <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-4">View on GitHub &rarr;</a>
-                                <button class="ask-ai-btn w-full text-center bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
-                                    <span class="mr-2">✨</span> Ask AI to Explain
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">// 01</span>
+    <h2 class="section-title">About <em>Me</em></h2>
+    <div class="section-line"></div>
+  </div>
 
-                    <!-- Project 3: Intercom -->
-                    <div class="project-card rounded-lg overflow-hidden flex flex-col">
-                        <img src="https://placehold.co/600x400/0f172a/be123c?text=Intercom" alt="Intercom Project" class="w-full h-48 object-cover">
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h3 class="text-xl font-bold text-white mb-2">Two-Way Intercom Circuit</h3>
-                            <p class="text-slate-400 mb-4 flex-grow project-description">
-                               Designed and implemented a two-way intercom system for short-range voice communication, showcasing skills in audio circuit design and the integration of microphone and speaker components.
-                            </p>
-                             <div class="mt-auto">
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="bg-red-900/50 text-red-300 text-xs font-semibold px-2.5 py-1 rounded-full">Audio Circuits</span>
-                                    <span class="bg-red-900/50 text-red-300 text-xs font-semibold px-2.5 py-1 rounded-full">Hardware</span>
-                                </div>
-                                <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-blue-400 hover:underline font-semibold block mb-4">View on GitHub &rarr;</a>
-                                <button class="ask-ai-btn w-full text-center bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 font-semibold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center">
-                                    <span class="mr-2">✨</span> Ask AI to Explain
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="py-24 section-reveal">
-            <div class="container mx-auto px-6 text-center">
-                 <h2 class="text-4xl font-bold text-white mb-6">Let's Connect</h2>
-                 <p class="text-slate-300 max-w-2xl mx-auto mb-10 text-lg">
-                     I'm currently seeking new opportunities and am always open to interesting conversations.
-                 </p>
-                 <div class="relative inline-block mb-10">
-                    <button id="copy-email-btn" class="bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300 text-lg">
-                        lankamokshagna@gmail.com
-                    </button>
-                    <div id="copy-message" class="absolute -top-12 left-1/2 -translate-x-1/2 bg-green-500 text-white text-sm py-1.5 px-3 rounded-md opacity-0 pointer-events-none">
-                        Copied to clipboard!
-                    </div>
-                 </div>
-                 <div class="flex justify-center space-x-8">
-                    <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="text-slate-400 hover:text-blue-400 transition transform hover:scale-110">
-                        <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.838 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd" /></svg>
-                    </a>
-                    <a href="https://www.linkedin.com/in/mokshagna-lanka-36826a299/" target="_blank" class="text-slate-400 hover:text-blue-400 transition transform hover:scale-110">
-                        <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                    </a>
-                 </div>
-            </div>
-        </section>
-    </main>
-    
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800">
-        <div class="container mx-auto px-6 py-6">
-            <p class="text-center text-slate-500 text-sm">
-                &copy; 2025 Lanka Mokshagna. Designed with passion.
-            </p>
-        </div>
-    </footer>
-    
-    <!-- Scroll to Top Button -->
-    <div id="scroll-to-top" title="Go to top">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-        </svg>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        I'm a <strong>B.Tech ECE student at Amrita Vishwa Vidyapeetham, Bengaluru</strong>, with a deep passion for building systems that sit at the intersection of embedded hardware and intelligent software.
+      </p>
+      <p>
+        My work spans <strong>Neuromorphic AI</strong> (Spiking Neural Networks), <strong>cyber-physical medical devices</strong>, low-level embedded programming on ARM microcontrollers, and computer vision pipelines for challenging environments like underwater imaging.
+      </p>
+      <p>
+        I don't just write code — I design systems that respond to the physical world in real time, from signal acquisition to intelligent decision-making.
+      </p>
     </div>
 
-    <!-- AI Explanation Modal -->
-    <div id="ai-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] hidden">
-        <div id="ai-modal-content" class="bg-slate-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-700">
-            <div class="flex items-center justify-between p-4 border-b border-slate-700">
-                <h3 class="text-xl font-bold text-white flex items-center">
-                    <span class="mr-3 text-2xl">✨</span> AI Project Insights
-                </h3>
-                <button id="close-modal-btn" class="text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
-            </div>
-            <div id="ai-response-container" class="p-6 overflow-y-auto">
-                <!-- Loading Spinner -->
-                <div id="ai-loader" class="flex justify-center items-center h-48">
-                    <div class="loader"></div>
-                </div>
-                <!-- AI Response -->
-                <div id="ai-response" class="prose"></div>
-            </div>
+    <div class="reveal">
+      <div class="edu-timeline">
+        <div class="edu-item">
+          <span class="edu-year">2023 – NOW</span>
+          <div class="edu-info">
+            <div class="edu-deg">B.Tech — Electronics & Communication Eng.</div>
+            <div class="edu-place">Amrita Vishwa Vidyapeetham, Bengaluru</div>
+            <span class="edu-score">CGPA: 6.32</span>
+          </div>
         </div>
+        <div class="edu-item">
+          <span class="edu-year">2021 – 2023</span>
+          <div class="edu-info">
+            <div class="edu-deg">Class XII</div>
+            <div class="edu-place">Ascent Junior College, Visakhapatnam</div>
+            <span class="edu-score">74.2%</span>
+          </div>
+        </div>
+        <div class="edu-item">
+          <span class="edu-year">2019 – 2021</span>
+          <div class="edu-info">
+            <div class="edu-deg">Class X</div>
+            <div class="edu-place">Tirumala High School, Visakhapatnam</div>
+            <span class="edu-score" style="border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,.07)">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header reveal">
+    <span class="section-num">// 02</span>
+    <h2 class="section-title">Tech <em>Stack</em></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-cat">Hardware Design</div>
+      <div class="skill-items">
+        <span class="tag amber">VLSI Design</span>
+        <span class="tag amber">Verilog (Basics)</span>
+        <span class="tag amber">Xilinx Vivado</span>
+        <span class="tag amber">Proteus</span>
+        <span class="tag amber">FPGA</span>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar"><div class="skill-bar-fill" data-w="72"></div></div>
+      </div>
     </div>
 
+    <div class="skill-card reveal" style="animation-delay:.1s">
+      <div class="skill-cat">Microcontrollers & Embedded</div>
+      <div class="skill-items">
+        <span class="tag">LPC2148 ARM7</span>
+        <span class="tag">Keil µVision</span>
+        <span class="tag">UART / USART</span>
+        <span class="tag">Timer Config</span>
+        <span class="tag">DAQ Systems</span>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar"><div class="skill-bar-fill" data-w="80"></div></div>
+      </div>
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- Mobile Menu Toggle ---
-            const menuBtn = document.getElementById('menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-            document.querySelectorAll('#mobile-menu a').forEach(anchor => {
-                anchor.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-            });
+    <div class="skill-card reveal" style="animation-delay:.15s">
+      <div class="skill-cat">AI & Signal Processing</div>
+      <div class="skill-items">
+        <span class="tag red">Spiking Neural Nets</span>
+        <span class="tag red">YOLOv2</span>
+        <span class="tag red">Custom CNN (10-layer)</span>
+        <span class="tag red">Explainable AI</span>
+        <span class="tag red">MATLAB</span>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar"><div class="skill-bar-fill" data-w="75"></div></div>
+      </div>
+    </div>
 
-            // --- Dynamic Skills Population ---
-            const skills = [
-                'C', 'Keil', 'LTspice', 'MATLAB', 'Ansys', 'Proteus', 
-                'Circuit Design', 'Analog Electronics', 'Digital Electronics', 
-                'Signal Processing', 'Git & GitHub', 'Problem Solving'
-            ];
-            const skillsContainer = document.getElementById('skills-container');
-            skills.forEach(skill => {
-                const skillTag = document.createElement('div');
-                skillTag.className = 'skill-tag bg-slate-800 border border-slate-700 text-blue-300 text-sm font-medium px-4 py-2 rounded-full shadow-md cursor-pointer';
-                skillTag.textContent = skill;
-                skillsContainer.appendChild(skillTag);
-            });
-            
-            // --- Email Copy to Clipboard ---
-            const copyBtn = document.getElementById('copy-email-btn');
-            const copyMsg = document.getElementById('copy-message');
-            copyBtn.addEventListener('click', () => {
-                const emailToCopy = copyBtn.textContent.trim();
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = emailToCopy;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                try {
-                    document.execCommand('copy');
-                    copyMsg.style.transform = 'translate(-50%, -10px)';
-                    copyMsg.style.opacity = '1';
-                    setTimeout(() => {
-                        copyMsg.style.transform = 'translate(-50%, 0px)';
-                        copyMsg.style.opacity = '0';
-                    }, 2000);
-                } catch (err) {
-                    console.error('Unable to copy', err);
-                }
-                document.body.removeChild(tempTextArea);
-            });
+    <div class="skill-card reveal" style="animation-delay:.2s">
+      <div class="skill-cat">Programming</div>
+      <div class="skill-items">
+        <span class="tag">Python</span>
+        <span class="tag">Embedded C</span>
+        <span class="tag">C (Basics)</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">SQL</span>
+        <span class="tag">HTML/CSS</span>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar"><div class="skill-bar-fill" data-w="82"></div></div>
+      </div>
+    </div>
 
-            // --- Scroll Reveal Animation ---
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
+    <div class="skill-card reveal" style="animation-delay:.25s">
+      <div class="skill-cat">Computer Vision</div>
+      <div class="skill-items">
+        <span class="tag amber">Fourier Filtering</span>
+        <span class="tag amber">DCP Dehazing</span>
+        <span class="tag amber">Laplace Decomp.</span>
+        <span class="tag amber">Object Detection</span>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar"><div class="skill-bar-fill" data-w="70"></div></div>
+      </div>
+    </div>
 
-            document.querySelectorAll('.section-reveal').forEach(section => {
-                observer.observe(section);
-            });
-            
-            // --- Project Card Mouse Follow Glow ---
-            document.querySelectorAll('.project-card').forEach(card => {
-                card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--x', `${x}px`);
-                    card.style.setProperty('--y', `${y}px`);
-                });
-            });
+    <div class="skill-card reveal" style="animation-delay:.3s">
+      <div class="skill-cat">Domain Knowledge</div>
+      <div class="skill-items">
+        <span class="tag">Digital Electronics</span>
+        <span class="tag">CMOS Logic</span>
+        <span class="tag">Analog Circuits</span>
+        <span class="tag">Communication Systems</span>
+      </div>
+      <div class="skill-bar-wrap">
+        <div class="skill-bar"><div class="skill-bar-fill" data-w="78"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-            // --- Scroll to Top Button ---
-            const scrollToTopBtn = document.getElementById('scroll-to-top');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    scrollToTopBtn.classList.add('visible');
-                } else {
-                    scrollToTopBtn.classList.remove('visible');
-                }
-            });
-            scrollToTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">// 03</span>
+    <h2 class="section-title">Featured <em>Projects</em></h2>
+    <div class="section-line"></div>
+  </div>
 
-            // --- Gemini AI Feature ---
-            const aiModal = document.getElementById('ai-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const aiLoader = document.getElementById('ai-loader');
-            const aiResponseEl = document.getElementById('ai-response');
-            const askAiButtons = document.querySelectorAll('.ask-ai-btn');
+  <div class="projects-list">
 
-            const openModal = () => aiModal.classList.remove('hidden');
-            const closeModal = () => aiModal.classList.add('hidden');
+    <!-- P1 -->
+    <div class="project-card reveal">
+      <div class="project-accent"></div>
+      <div class="project-body">
+        <div class="project-meta">
+          <span class="project-num">P_01</span>
+          <span style="font-family:var(--font-mono);font-size:.65rem;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--cyan);padding:.15rem .5rem;letter-spacing:.1em">ACTIVE</span>
+          <span class="project-date">Sep 2025 → Present</span>
+        </div>
+        <h3 class="project-title">Multimodal Osteoporosis<br>Screening System</h3>
+        <p class="project-desc">
+          A <strong>cyber-physical diagnostic system</strong> fusing Ultrasound, RF, and Mechanical Impulse sensing into a unified Spiking Neural Network for non-invasive bone health analysis. Designed for real-world clinical settings with full explainability.
+        </p>
+        <ul class="project-bullets">
+          <li>Engineered tri-modal sensor fusion: Ultrasound + RF + Mechanical Impulse for comprehensive bone characterisation</li>
+          <li>High-speed DAQ bridge via Arduino Nano at 115,200 baud streaming real-time data to Python GUI</li>
+          <li>Integrated Explainable AI layer + QR-based medical report generation for clinical deployment readiness</li>
+          <li>SNN architecture chosen for its biological plausibility and temporal data processing advantage</li>
+        </ul>
+        <div class="project-tags">
+          <span class="tag">Spiking Neural Net</span><span class="tag">Arduino Nano</span>
+          <span class="tag">Python GUI</span><span class="tag">Explainable AI</span>
+          <span class="tag amber">Cyber-Physical</span><span class="tag amber">Medical Device</span>
+          <span class="tag">DAQ / UART</span>
+        </div>
+      </div>
+    </div>
 
-            closeModalBtn.addEventListener('click', closeModal);
-            aiModal.addEventListener('click', (e) => {
-                if (e.target === aiModal) {
-                    closeModal();
-                }
-            });
+    <!-- P2 -->
+    <div class="project-card reveal">
+      <div class="project-accent red"></div>
+      <div class="project-body">
+        <div class="project-meta">
+          <span class="project-num">P_02</span>
+          <span style="font-family:var(--font-mono);font-size:.65rem;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--cyan);padding:.15rem .5rem;letter-spacing:.1em">ACTIVE</span>
+          <span class="project-date">Oct 2025 → Present</span>
+        </div>
+        <h3 class="project-title">Advanced Underwater Image<br>Enhancement & Detection</h3>
+        <p class="project-desc">
+          A full computer vision pipeline tackling the unique physics of underwater light propagation — combining <strong>physics-based image restoration</strong> with a high-accuracy deep learning detection stack, achieving <strong>96.46% accuracy</strong>.
+        </p>
+        <ul class="project-bullets">
+          <li>Multi-stage enhancement: Fourier frequency filtering → Dark Channel Prior dehazing → Laplace decomposition for detail recovery</li>
+          <li>Addresses light attenuation, backscatter, and wavelength-dependent absorption present in underwater environments</li>
+          <li>YOLOv2 detector combined with a custom 10-layer CNN classification head trained on domain-specific data</li>
+          <li>End-to-end pipeline from raw degraded frame to classified detection output</li>
+        </ul>
+        <div class="project-tags">
+          <span class="tag red">YOLOv2</span><span class="tag red">10-layer CNN</span>
+          <span class="tag">Fourier Filtering</span><span class="tag">DCP Dehazing</span>
+          <span class="tag">Laplace Decomp.</span><span class="tag amber">96.46% Acc.</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+    </div>
 
-            askAiButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const card = e.target.closest('.project-card');
-                    const projectTitle = card.querySelector('h3').textContent;
-                    const projectDescription = card.querySelector('.project-description').textContent.trim();
-                    
-                    openModal();
-                    aiLoader.style.display = 'flex';
-                    aiResponseEl.innerHTML = '';
-                    
-                    getAIAssistedExplanation(projectTitle, projectDescription);
-                });
-            });
+    <!-- P3 -->
+    <div class="project-card reveal">
+      <div class="project-accent amber"></div>
+      <div class="project-body">
+        <div class="project-meta">
+          <span class="project-num">P_03</span>
+          <span style="font-family:var(--font-mono);font-size:.65rem;background:rgba(255,168,39,.1);border:1px solid rgba(255,168,39,.3);color:var(--amber);padding:.15rem .5rem;letter-spacing:.1em">COMPLETED</span>
+          <span class="project-date">May 2025</span>
+        </div>
+        <h3 class="project-title">Morse Code Generator<br>on LPC2148 ARM7</h3>
+        <p class="project-desc">
+          A precise embedded system translating alphanumeric input into standardised Morse code — with real-time <strong>16×2 LCD visual feedback</strong> and hardware-accurate tone generation using Timer0 configuration.
+        </p>
+        <ul class="project-bullets">
+          <li>Implemented on LPC2148 (ARM7TDMI-S) with UART-based serial input at configurable baud rates</li>
+          <li>Lookup table architecture for O(1) character-to-Morse translation with full ASCII coverage</li>
+          <li>Timer0 configured for precise 1 kHz carrier with standardised timings: 100ms dot, 300ms dash</li>
+          <li>Programmed in Embedded C using Keil µVision IDE; simulated and verified in Proteus</li>
+        </ul>
+        <div class="project-tags">
+          <span class="tag amber">LPC2148</span><span class="tag amber">ARM7</span>
+          <span class="tag">Embedded C</span><span class="tag">Keil µVision</span>
+          <span class="tag">Proteus</span><span class="tag">UART</span>
+          <span class="tag">Timer Config</span>
+        </div>
+        <a href="https://lankamokshagna-cyber.github.io/morse-code-generator-report.pdf" target="_blank" class="project-link">
+          VIEW REPORT →
+        </a>
+      </div>
+    </div>
 
-            async function getAIAssistedExplanation(title, description) {
-                const apiKey = ""; // API key is handled by the environment
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+  </div>
+</section>
 
-                const systemPrompt = "You are a helpful engineering manager explaining a student's project to a non-technical recruiter. Your goal is to make the project sound impressive but easy to understand. Frame the explanation in 3 parts: 1) A simple 'What it is' summary. 2) A 'Key Skills Demonstrated' section as a bulleted list, highlighting the practical abilities shown. 3) A 'Why it Matters' section explaining its real-world relevance. Use markdown for formatting.";
-                const userQuery = `Project Title: ${title}\nProject Description: ${description}`;
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-num">// 04</span>
+    <h2 class="section-title">Get In <em>Touch</em></h2>
+    <div class="section-line"></div>
+  </div>
 
-                const payload = {
-                    contents: [{ parts: [{ text: userQuery }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                };
+  <div class="contact-inner">
+    <p class="reveal">
+      Open to research collaborations, internships, and projects at the intersection of embedded systems and AI. If you're working on something that blurs the hardware-software boundary — let's talk.
+    </p>
+    <div class="contact-links reveal">
+      <a href="mailto:lankamokshagna@gmail.com" class="contact-link">
+        <span class="contact-link-icon">EMAIL</span>
+        <span class="contact-link-text">lankamokshagna@gmail.com</span>
+      </a>
+      <a href="https://github.com/lankamokshagna-cyber" target="_blank" class="contact-link">
+        <span class="contact-link-icon">GITHUB</span>
+        <span class="contact-link-text">github.com/lankamokshagna-cyber</span>
+      </a>
+      <a href="https://www.linkedin.com/in/mokshagna-lanka-36826a299/" target="_blank" class="contact-link">
+        <span class="contact-link-icon">LINKEDIN</span>
+        <span class="contact-link-text">Mokshagna Lanka</span>
+      </a>
+      <a href="tel:+917093578769" class="contact-link">
+        <span class="contact-link-icon">PHONE</span>
+        <span class="contact-link-text">+91 7093578769</span>
+      </a>
+    </div>
+  </div>
+</section>
 
-                let response;
-                let attempts = 0;
-                const maxAttempts = 5;
-                let delay = 1000;
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">© 2025 Lanka Mokshagna Sri Sai — ECE & Neuromorphic AI</div>
+  <div class="footer-right">AMRITA VISHWA VIDYAPEETHAM · BENGALURU</div>
+</footer>
 
-                while (attempts < maxAttempts) {
-                    try {
-                        response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
+<script>
+/* ─── CURSOR ─── */
+const cur = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  trail.style.left = e.clientX + 'px'; trail.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cur.style.transform = 'translate(-50%,-50%) scale(2)'; });
+  el.addEventListener('mouseleave', () => { cur.style.transform = 'translate(-50%,-50%) scale(1)'; });
+});
 
-                        if (response.ok) {
-                            const result = await response.json();
-                            const candidate = result.candidates?.[0];
-                            if (candidate && candidate.content?.parts?.[0]?.text) {
-                                // Basic markdown to HTML conversion
-                                let htmlResponse = candidate.content.parts[0].text;
-                                htmlResponse = htmlResponse
-                                    .replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>') // Bold to h3 for section titles
-                                    .replace(/\* (.*?)(?=\n\*|\n\n|$)/g, '<li>$1</li>') // List items
-                                    .replace(/(\r\n|\n|\r)/g, '<br>');
-                                 htmlResponse = `<ul>${htmlResponse.replace(/<br><li>/g, '<li>')}</ul>`.replace(/<\/li><br>/g, '</li>');
-
-                                aiResponseEl.innerHTML = htmlResponse;
-                            } else {
-                                aiResponseEl.textContent = 'Sorry, the AI response was empty. Please try again.';
-                            }
-                            aiLoader.style.display = 'none';
-                            return; 
-                        } else if (response.status === 429 || response.status >= 500) {
-                            // Throttling or server error, wait and retry
-                            attempts++;
-                            if (attempts >= maxAttempts) {
-                                throw new Error(`API request failed after ${maxAttempts} attempts with status: ${response.status}`);
-                            }
-                            await new Promise(resolve => setTimeout(resolve, delay));
-                            delay *= 2; // Exponential backoff
-                        } else {
-                            // Other client-side error
-                             throw new Error(`API request failed with status: ${response.status}`);
-                        }
-
-                    } catch (error) {
-                        console.error('Gemini API call failed:', error);
-                        attempts++;
-                         if (attempts >= maxAttempts) {
-                            aiResponseEl.textContent = 'Sorry, something went wrong while contacting the AI assistant. Please try again later.';
-                            aiLoader.style.display = 'none';
-                            return;
-                        }
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2;
-                    }
-                }
-            }
+/* ─── CIRCUIT CANVAS ─── */
+(function(){
+  const canvas = document.getElementById('circuit-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], lines = [];
+  const CYAN = '#00d4ff', AMBER = '#ffa827';
+  
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    buildCircuit();
+  }
+  
+  function buildCircuit(){
+    nodes = []; lines = [];
+    const cols = Math.floor(W/90), rows = Math.floor(H/80);
+    for(let r=0;r<=rows;r++){
+      for(let c=0;c<=cols;c++){
+        if(Math.random()>.45) continue;
+        const jitter = 18;
+        nodes.push({
+          x: c*90 + (Math.random()-.5)*jitter,
+          y: r*80 + (Math.random()-.5)*jitter,
+          r: Math.random()<.15 ? 3.5 : 1.5,
+          pulse: Math.random()*Math.PI*2,
+          color: Math.random()>.7 ? AMBER : CYAN
         });
-    </script>
+      }
+    }
+    // connect nearby nodes
+    nodes.forEach((a,i) => {
+      nodes.forEach((b,j) => {
+        if(j<=i) return;
+        const dx=b.x-a.x, dy=b.y-a.y, dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<130 && Math.random()>.4){
+          lines.push({a,b,
+            progress:0, speed:0.003+Math.random()*0.004,
+            color: Math.random()>.7 ? AMBER : CYAN,
+            lit:false, litTimer:0
+          });
+        }
+      });
+    });
+  }
+  
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=.012;
+    
+    lines.forEach(ln => {
+      ln.progress += ln.speed;
+      if(ln.progress>1.3){ ln.progress=0; ln.lit=true; ln.litTimer=30; }
+      if(ln.lit){ ln.litTimer--; if(ln.litTimer<=0) ln.lit=false; }
+      const x1=ln.a.x, y1=ln.a.y, x2=ln.b.x, y2=ln.b.y;
+      // static trace
+      ctx.strokeStyle = ln.lit ? ln.color : 'rgba(0,212,255,.12)';
+      ctx.lineWidth = ln.lit ? 1 : .5;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      // moving dot
+      const p = Math.min(ln.progress,1);
+      const mx=x1+(x2-x1)*p, my=y1+(y2-y1)*p;
+      ctx.fillStyle = ln.color;
+      ctx.shadowBlur = 8; ctx.shadowColor = ln.color;
+      ctx.beginPath(); ctx.arc(mx,my,2,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    });
+    
+    nodes.forEach(n => {
+      n.pulse+=.03;
+      const glow = .4+.4*Math.sin(n.pulse);
+      ctx.fillStyle = n.color;
+      ctx.shadowBlur = 10*glow; ctx.shadowColor = n.color;
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    });
+    
+    requestAnimationFrame(draw);
+  }
+  
+  window.addEventListener('resize', resize);
+  resize(); draw();
+})();
+
+/* ─── REVEAL ON SCROLL ─── */
+const reveals = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: .1 });
+reveals.forEach(r => revealObs.observe(r));
+
+/* ─── SKILL BAR ANIMATION ─── */
+const bars = document.querySelectorAll('.skill-bar-fill');
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const target = e.target;
+      setTimeout(()=>{ target.style.width = target.dataset.w + '%'; }, 200);
+      barObs.unobserve(target);
+    }
+  });
+}, { threshold:.5 });
+bars.forEach(b => barObs.observe(b));
+
+/* ─── TYPEWRITER for hero sub ─── */
+const sub = document.querySelector('.hero-sub');
+if(sub){
+  const orig = sub.innerHTML;
+  sub.innerHTML='';
+  let i=0;
+  function type(){
+    if(i<orig.length){ sub.innerHTML=orig.slice(0,++i); requestAnimationFrame(type); }
+  }
+  setTimeout(type, 500);
+}
+
+/* ─── STAGGER PROJECT REVEALS ─── */
+document.querySelectorAll('.project-card.reveal').forEach((el,i)=>{
+  el.style.transitionDelay = (i*.12)+'s';
+});
+document.querySelectorAll('.skill-card.reveal').forEach((el,i)=>{
+  el.style.transitionDelay = (i*.08)+'s';
+});
+</script>
 </body>
 </html>
-
